@@ -5,12 +5,12 @@ import { Store, StoreAvailability } from "./types.ts";
 const hour = 1e3 * 60 * 60;
 
 // PS5
-// const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-5-digital-edition-1665134.html";
-// const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=6915165";
+const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-5-digital-edition-1665134.html";
+const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=6915165";
 
 // Slim PS4
-const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-4-slim-500-gb-playstation-now-12-maanden-1676540.html";
-const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=7127526";
+// const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-4-slim-500-gb-playstation-now-12-maanden-1676540.html";
+// const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=7127526";
 
 async function isAvailable() {
 
