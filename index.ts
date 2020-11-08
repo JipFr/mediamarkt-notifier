@@ -1,5 +1,6 @@
 
 import { config } from "https://deno.land/x/dotenv/mod.ts";
+import * as colors from "https://deno.land/std@0.76.0/fmt/colors.ts";
 import { Store, StoreAvailability } from "./types.ts";
 
 const hour = 1e3 * 60 * 60;
@@ -60,16 +61,22 @@ async function sendNotification(message: string) {
 }
 
 async function main() {
+
+	console.log(`${colors.yellow("[App]")} Checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+
 	let availability = await isAvailable();
-	
-	console.log(availability);
 
 	if(availability.online) {
 		await sendNotification(`Product beschikbaar\n${pageUrl}`);
+		console.log(`${colors.green("[Pushed]")} Sent message about online availability at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 	}
-	if(availability.stores) {
+	if(availability.stores.length > 0) {
 		await sendNotification(`Product beschikbaar in: ${availability.stores.map(store => store.store.name).join(", ")}`)
+		console.log(`${colors.green("[Pushed]")} Sent message about availability in ${availability.stores.length} stores at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 	}
+
+	console.log(`${colors.brightYellow("[App]")} Done checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+
 	
 }
 main();
