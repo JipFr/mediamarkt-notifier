@@ -8,6 +8,7 @@ const hour = 1e3 * 60 * 60;
 // PS5
 const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-5-digital-edition-1665134.html";
 const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=6915165";
+const CoolBlueURL = "https://www.coolblue.nl/product/865867/playstation-5-digital-edition.html";
 
 // Slim PS4
 // const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-4-slim-500-gb-playstation-now-12-maanden-1676540.html";
@@ -62,6 +63,7 @@ async function sendNotification(message: string) {
 
 async function main() {
 
+	// Mediamarkt
 	console.log(`${colors.yellow("[App]")} Checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 
 	let availability = await isAvailable();
@@ -77,7 +79,24 @@ async function main() {
 
 	console.log(`${colors.brightYellow("[App]")} Done checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 
-	
 }
 main();
 setInterval(main, 1 * hour);
+
+// Do coolblue
+async function cbMain() {
+	console.log(`${colors.yellow("[CB]")} Checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+
+	let html = await (await fetch(CoolBlueURL)).text();
+	
+	let canOrder = !html.includes("Door een beperkte voorraad kun je de PlayStation 5 helaas niet pre-orderen of reserveren.")
+	
+	if(canOrder) {
+		await sendNotification("CoolBlue is beschikbaar");
+		console.log(`${colors.green("[Pushed CB]")} Sent message about availability on CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+	}
+	console.log(`${colors.brightYellow("[CB]")} Checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+
+}
+cbMain();
+setInterval(cbMain, 1e3 * 60 * 3);
