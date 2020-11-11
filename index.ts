@@ -85,7 +85,7 @@ setInterval(main, 1 * hour);
 
 // Do coolblue
 async function cbMain() {
-	console.log(`${colors.yellow("[CB]")} Checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+	console.log(`${colors.yellow("[CB]")} Checking CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 
 	let html = await (await fetch(CoolBlueURL)).text();
 	
@@ -95,7 +95,7 @@ async function cbMain() {
 		await sendNotification("CoolBlue is beschikbaar");
 		console.log(`${colors.green("[Pushed CB]")} Sent message about availability on CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 	}
-	console.log(`${colors.brightYellow("[CB]")} Checking at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+	console.log(`${colors.brightYellow("[CB]")} Done checking CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 
 }
 cbMain();
