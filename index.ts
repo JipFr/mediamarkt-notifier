@@ -89,7 +89,7 @@ async function cbMain() {
 
 	let html = await (await fetch(CoolBlueURL)).text();
 	
-	let canOrder = !html.includes("Door een beperkte voorraad kun je de PlayStation 5 helaas niet pre-orderen of reserveren.")
+	let canOrder = !(html.includes("Door een beperkte voorraad kun je de PlayStation 5 helaas niet pre-orderen of reserveren.") || html.includes("We verkopen de eerste beschikbare PlayStations via deze pagina. De eerste voorraad van de PlayStation 5 zal niet beschikbaar zijn in onze winkels."))
 	
 	if(canOrder) {
 		await sendNotification("CoolBlue is beschikbaar");
