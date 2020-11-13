@@ -2,17 +2,23 @@
 import { config } from "https://deno.land/x/dotenv/mod.ts";
 import * as colors from "https://deno.land/std@0.76.0/fmt/colors.ts";
 import { Store, StoreAvailability } from "./types.ts";
+import * as Bot from "https://deno.land/x/telegram/mod.ts"
 
+// Get previous coolblue notices
+let notices: string[] = [];
+try {
+	notices = JSON.parse(await Deno.readTextFile("./notices.json"));
+} catch(err) {
+	notices = [];
+}
+
+// Config
 const hour = 1e3 * 60 * 60;
 
 // PS5
 const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-5-digital-edition-1665134.html";
 const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=6915165";
 const CoolBlueURL = "https://www.coolblue.nl/product/865867/playstation-5-digital-edition.html";
-
-// Slim PS4
-// const pageUrl = "https://www.mediamarkt.nl/nl/product/_sony-playstation-4-slim-500-gb-playstation-now-12-maanden-1676540.html";
-// const storeUrl = "https://www.mediamarkt.nl/nl/market-selector-list-availability.json?catEntryId=7127526";
 
 async function isAvailable() {
 
@@ -45,6 +51,13 @@ async function sendNotification(message: string) {
 	
 	// Get environment vars
 	let env = config();
+
+	// Create telegram bot
+	const bot = new Bot.Telegram(env.TELEGRAM_BOT_TOKEN);
+	bot.sendMessage({
+		chat_id: 184541934,
+		text: message
+	});
 
 	// Generate main form
 	let fd = new FormData();
@@ -88,13 +101,19 @@ async function cbMain() {
 	console.log(`${colors.yellow("[CB]")} Checking CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 
 	let html = await (await fetch(CoolBlueURL)).text();
+	let noticeHtml = html.split(`notice js-notice`)[1].replace(/\n|\t|  /g, "").split("</div></div></div>")[0];
+	let noticeText = noticeHtml.replace(/<br>/gi, "LINEBREAK").replace(/<(.+?)>/g, "").split(">")[1].replace(/\.(\w)/g, ". $1");
 	
-	let canOrder = !(html.includes("Door een beperkte voorraad kun je de PlayStation 5 helaas niet pre-orderen of reserveren.") || html.includes("We verkopen de eerste beschikbare PlayStations via deze pagina. De eerste voorraad van de PlayStation 5 zal niet beschikbaar zijn in onze winkels."))
-	
-	if(canOrder) {
-		await sendNotification("CoolBlue is beschikbaar");
-		console.log(`${colors.green("[Pushed CB]")} Sent message about availability on CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
+
+	if(!notices.includes(noticeText)) {
+		await sendNotification(noticeText);
+		notices.push(noticeText);
+
+		console.log(noticeText)
+		
+		await Deno.writeTextFile("./notices.json", JSON.stringify(notices));
 	}
+
 	console.log(`${colors.brightYellow("[CB]")} Done checking CoolBlue at ${new Date().toISOString().split(".")[0].split("T").join(" ")}`)
 
 }
